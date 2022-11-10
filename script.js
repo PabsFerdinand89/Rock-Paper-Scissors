@@ -1,66 +1,97 @@
-const selectionButtons = document.querySelectorAll('[data-selection]')
-const finalColumn = document.querySelector('[data-final-column')
-const computerScoreSpan = document.querySelector('[data-computer-score]')
-const yourScoreSpan = document.querySelector('[date-your-score]')
-const SELECTIONS = [
-  {
-    name: 'rock',
-    emoji: '🗿',
-    beats: 'scissors'
-  },
-  {
-   name: 'paper' ,
-   emoji: '📃',
-   beats: 'rock'
-  },
-  {
-  name: 'scissors',
-  emoji: '✂️',
-  beats: 'paper'
+var getPlayerChoice = function() {
+  var playerChoice = prompt("Choose: Rock, Paper, or Scissors");
+
+  // if player makes no selection, ask again
+  while (playerChoice !== 'Rock' && playerChoice !== 'Paper' && playerChoice !== 'Scissors') {
+    // if prompt is cancelled, the while loop stops
+    if (playerChoice === null) {
+      break;
+    }
+    playerChoice = prompt("Invalid input! Please choose rock, paper, or scissors");
   }
-]
-
-selectionButtons.forEach(selectionButton => {
-  selectionButton.addEventListener('click', e =>{
-    const selectionName = selectionButton.dataset.selection
-    const selection = SELECTIONS.find(selection => selection.name === selectionName)
-    makeSelection(selection)
-  })
-})
-
-function makeSelection(selection) {
-  const computerSelection = randomSelection()
-  const youWin = winner(selection, computerSelection)
-  const computerWin = winner(computerSelection, selection)
-
-  addSelectionResult(computerSelection, computerWin)
-  addSelectionResult(selection, youWin)
-
-  if (youWin) incrementScore(yourScoreSpan)
-  if (computerWin) incrementScore(computerScoreSpan)
+  return playerChoice;
 }
 
-function increment(scoreSpan) {
-  scoreSpan.innerText = parseInt(scoreSpan.innerText) + 1
+
+var getComputerChoice = function () {
+  // gets a random number, decimal
+  var randomNum = Math.random();
+  // convert random number into rock, paper, scissors
+  if (randomNum < 0.3333) {
+    return "Rock";
+  } else if (randomNum > 0.3333 && randomNum < 0.6666) {
+    return "Scissors";
+  } else {
+    return "Paper";
+  }
+};
+
+
+var getWinner = function (playerChoice, computerChoice) {
+
+  if (computerChoice === playerChoice) {
+    return "Draw";
+  } else if (computerChoice === "Paper") {
+    if (playerChoice === "Scissors") {
+      return "Player";
+    } else if (playerChoice === "Rock") {
+      return "Computer";
+    }
+  } else if (computerChoice === "Rock") {
+    if (playerChoice === "Scissors") {
+      return "Computer";
+    } else if (playerChoice === "Paper") {
+      return "Player";
+    }
+  } else if (computerChoice === "Scissors") {
+    if (playerChoice === "Rock") {
+      return "Player";
+    } else if (playerChoice === "Paper") {
+      return "C;omputer";
+    }
+  }
 }
 
-function addSelectionResult(selection, winner) {
-  const div = document.createElement('div')
-  div.innerText = selection.emoji
-  div.classList.add('result-selection')
-  if (winner) div.classList.add('winner')
-  finalColumn.after(div)
+
+var singleGame = function () {
+  var playerChoice = getPlayerChoice();
+  if (playerChoice === null) {
+    return;
+  }
+
+  var computerChoice = getComputerChoice();
+
+  var winner = getWinner(playerChoice, computerChoice);
+
+  var message = "You chose " + playerChoice + ": computer chose" + computerChoice; 
+  if (getWinner === "Player") {
+    alert (message + "\nYou won!");
+  } else if (winner === "Computer") {
+    alert(message + "\nYou Lost");
+  } else {
+    alert(message + "\nDraw")
+  } 
+  return winner;
 }
 
-function winner(selection, opponentSelection) {
-  return selection.beats === opponentSelection.name
-}
+var bestOfThree = function () {
+  var playerWinCount = 0;
+  var computerWinCount = 0;
   
-function randomSelection() {
-  const randomIndex = Math.floor(Math.random() * SELECTIONS.length)
-  return SELECTIONS[randomIndex]
-}
+  while (playerWinCount < 2 && computerWinCount < 2) {
+    var winner = singleGame();
+    if (winner === "Player") {
+      playerWinCount++;
+    } else if (winner === "Computer") {
+      computerWinCount++;
+    } alert('Player score: ' + playerWinCount + ' - Computer Score: ' + computerWinCount);
+  }
 
-function bestOfThree () {
-  
+  var message = "Player score: " + playerWinCount + " - Computer Score: " + computerWinCount;
+
+  if (playerWinCount === 2) {
+    alert(message + "\nYou won!");
+  } else {
+    alert(message + "\nComputer won.");
+  }
 }
